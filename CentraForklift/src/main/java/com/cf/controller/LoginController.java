@@ -15,7 +15,7 @@ public class LoginController {
 	LoginService service;
 	
 	@RequestMapping("/validate")
-	public boolean validateUser(@RequestParam("userName") String uName, @RequestParam("pass") String pass) {
+	public int validateUser(@RequestParam("userName") String uName, @RequestParam("pass") String pass) {
 		System.out.println("validateUser method Starts...");
 		return service.isValidUser(uName, pass);
 	}

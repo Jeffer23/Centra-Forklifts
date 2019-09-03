@@ -1,8 +1,7 @@
 
 (function ($) {
     "use strict";
-
-
+    
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -87,9 +86,13 @@
 		var userName = $("#username").val();
 		var pass = $("#pass").val();
 	  $.ajax({
-		  url: "http://localhost:8080/CentraForklift/login/validate?userName=" + userName + "&pass=" + pass,
+		  url: "login/validate?userName=" + userName + "&pass=" + pass,
 		  success: function(result){
-			alert(result);
+			  loggedInUserID = result;
+			  
+		},
+		 error: function(result){
+			 alert("UserName or Password is Incorrect");
 		}
 	  });
 	});
