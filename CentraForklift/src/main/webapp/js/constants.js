@@ -1,5 +1,6 @@
 /**
  * 
  */
-var hostURL = "http://CentraForklift.com:8080/CentraForklift/";
-var loggedInUserID=1;
+var hostURL = "http://localhost:8080/CentraForklifts/";
+var userIdKey = "userId";
+var invoiceIdKey = "invoiceId";

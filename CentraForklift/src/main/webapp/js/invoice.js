@@ -1,77 +1,49 @@
 
 $(document).ready(function() {
-    var t = $('#invoiceTB').DataTable();
-    var counter = 1;
- 
-    
-    $('#addPurchaseOrder').on( 'click', function () {
-        t.row.add( [
-            counter +'.1',
-            counter +'.2',
-            counter +'.3',
-            counter +'.4',
-            counter +'.5',
-            counter +'.6',
-            counter +'.7'
-        ] ).draw( false );
- 
-        counter++;
-    } );
- 
-    $('#invoiceTB tbody').on( 'click', 'tr', function () {
-        $(this).toggleClass('selected');
-    } );
- 
-    $('#approve').click( function () {
-    	var selectedPurchaseOrders = t.rows('.selected').data();
-    	var totalSelectedOrders = t.rows('.selected').data().length;
-    	var purchaseOrderIds = [];
-    	for(var i=0; i<totalSelectedOrders ; i++){
-    		var purchaseOrder = selectedPurchaseOrders[i];
-    		purchaseOrderIds.push(purchaseOrder[2]);
-    	}
-    	 $.ajax({
-   		  url: "purchase/approvePurchaseOrder",
-   		  type : "POST",
-   		  dataType: 'json',
-   		  contentType: "application/json",
-	      data: JSON.stringify(purchaseOrderIds),
-   		  success: function(result){
-	   			$.ajax({
-	   			  url: "purchase/getInvoiceTabDetails?userId=" + loggedInUserID,
-	   			  success: function(result){
-	   				result.forEach(function(value){
-	   					 t.row.add( [
-	   				            value.orderDate,
-	   				            value.purchaseOrderID,
-	   				            value.purchaseOrderID,
-	   				            value.quantity,
-	   				            value.unitPrice,
-	   				            value.totalPrice,
-	   				            value.orderStatus
-	   				        ] ).draw( false );	
-	   				});
-	   			}
-	   		  });
-   			}
-    	 });
-    });
-    
-    // Ajax call to get the PurchaseOrders
-    $.ajax({
-		  url: "purchase/getInvoiceTabDetails?userId=" + loggedInUserID,
+	if(sessionStorage.getItem(userIdKey) == null){
+		window.location.href = hostURL;
+	}
+	
+	var invoiceId = localStorage.getItem(invoiceIdKey);
+	
+	$.ajax({
+		  url: "purchase/getInvoiceDetails?invoiceId=" + invoiceId,
 		  success: function(result){
-			result.forEach(function(value){
-				 t.row.add( [
-			            value.orderDate,
-			            value.purchaseOrderID,
-			            value.purchaseOrderID,
-			            value.quantity,
-			            value.unitPrice,
-			            value.totalPrice,
-			            value.orderStatus
-			        ] ).draw( false );	
-			});
+			  console.log(result);
+			  for(var i=0; i<result.length ; i++){
+				  var order = result[i];
+				  var name = order.userID.lastName + ", " + order.userID.firstName; 
+				  $("#name").text(name);
+				  var userAddress = order.userID.address;
+				  $("#userAddress").text(userAddress);
+				  $("#userEmail").attr("href", "mailto:" + order.userID.emailAddress);
+				  $("#userEmail").text(order.userID.emailAddress);
+				$("#billToAddress").text(order.billingAddress);
+				$("#shipToAddress").text(order.shippingAddress);
+				$("#invoiceId").text(order.invoice.invoiceId);
+				$("#invoiceDate").text(order.invoice.invoiceDate.substring(0, 10));
+				$("#dueDate").text(order.invoice.dueDate.substring(0, 10));
+				var tableRows;
+				for(var j=0; j<order.products.length; j++){
+					var product =order.products[j];
+					tableRows+='<tr>' +
+						'<td class="desc"><h3>Purchase Order : #'+ order.purchaseOrderID +'</h3>' + product.product.productName +'</td>' +
+						'<td class="qty">' + product.quantity + '</td>' +
+						'<td class="unit">' + product.product.unitPrice + '</td>' +
+						'<td class="total">' + product.totalAmount + '</td>' +
+					'</tr>';
+				}
+				$('#ordersTable tr:last').after(tableRows);
+				$("#subTotal").text(order.invoice.subTotal);
+				$("#discount").text(order.invoice.discount);
+				$("#subTotalLessDiscount").text(order.invoice.subTotalLessDiscount);
+				$("#taxRate").text(order.invoice.taxRate);
+				$("#totalTax").text(order.invoice.totalTax);
+				$("#balanceDue").text(order.invoice.balanceDue);
+				
+			  }
 		}
 	  });
+	
+	
 } );

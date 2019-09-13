@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Centra Forklift</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+<link rel="icon" type="image/png" href="images/icons/favicon.ico" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css"
+	href="vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css"
+	href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css"
+	href="fonts/iconic/css/material-design-iconic-font.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css"
+	href="vendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css"
+	href="vendor/animsition/css/animsition.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css"
+	href="vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css"
+	href="vendor/daterangepicker/daterangepicker.css">
+<link rel="stylesheet" type="text/css"
+	href="vendor/jquery/ui/jquery-ui-1.12.1.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="css/util.css">
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<link rel="stylesheet" type="text/css" href="css/datatables.min.css">
+<link rel="stylesheet" type="text/css" href="css/fullfillment.css">
+<!--===============================================================================================-->
+</head>
+<body>
+	<input type="hidden" name="userId" value="0" />
+	<div class="limiter">
+		<div class="container-login100"
+			style="background-image: url('images/bg-01.jpg');">
+			<div class="wrap-invoice100">
+				<div style="float:right; color: black;">
+					User : <span id="signedInUser"></span>
+					<a href="login.html" id="signout">Sign out</a>
+				</div>
+				<span class="login100-form-logo"> <img
+					src="./images/Centra-Forklifts.jpg" />
+				</span>
+				<table id="fullfillmentTB" class="display" style="width: 100%">
+					<thead>
+						<tr>
+							<th></th>
+							<th>Purchase Order ID</th>
+							<th>User ID</th>
+							<th>Order Status</th>
+							<th>Billing Address</th>
+							<th>Shipping Address</th>
+							<th>Amount</th>
+							<th>View Invoice</th>
+						</tr>
+						</tr>
+					</thead>
+
+				</table>
+				
+				<br>	
+				<button class="invoice100-form-btn" id="back">
+					Back</button>
+				<button class="invoice100-form-btn" id="openTaxDetails">
+					Fullfill</button>
+				<button class="invoice100-form-btn" id="email">
+					E-mail</button>
+				
+				<div id="dialog-form" title="Tax Details" class="wrap-addpurchaseorder">				 
+				  <form>
+					<fieldset>
+					  <label for="subTotal">Total Amount</label>
+					  <input type="text" name="subTotal" id="subTotal" readonly="true" class="text ui-widget-content ui-corner-all">
+					  <label for="discount">discount %</label>
+					  <input type="text" name="discount" id="discount" class="text ui-widget-content ui-corner-all">
+					  <label for="subTotalLessDiscount">Total Less Discount</label>
+					  <input type="text" name="subTotalLessDiscount" id="subTotalLessDiscount" readonly="true" class="text ui-widget-content ui-corner-all">
+					  <label for="taxRate">Tax Rate</label>
+					  <select id="taxRate" class="select ui-widget-content ui-corner-all">
+					  	<option value="">Select a Tax Rate</option>
+					  	<option value="0">0%</option>
+					  	<option value="5">5%</option>
+					  	<option value="12">12%</option>
+					  	<option value="18">18%</option>
+					  	<option value="28">28%</option>
+					  </select>
+					  <label for="totalTax">Total Tax</label>
+					  <input type="text" name="totalTax" id="totalTax" readonly="true" class="text ui-widget-content ui-corner-all">
+					  <label for="shippingFee">Shipping Fee</label>
+					  <input type="text" name="shippingFee" id="shippingFee" class="text ui-widget-content ui-corner-all">
+				 
+					  <!-- Allow form submission with keyboard without duplicating the dialog button -->
+					  <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+					</fieldset>
+				  </form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="dropDownSelect1"></div>
+
+	<!--===============================================================================================-->
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="vendor/jquery/ui/jquery-ui-1.12.1.js"></script>
+	<!--===============================================================================================-->
+	<script src="vendor/animsition/js/animsition.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="vendor/select2/select2.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="vendor/daterangepicker/moment.min.js"></script>
+	<script src="vendor/daterangepicker/daterangepicker.js"></script>
+	<!--===============================================================================================-->
+	<script src="vendor/countdowntime/countdowntime.js"></script>
+	<!--===============================================================================================-->
+	<script src="js/datatables.min.js"></script>
+	<script src="js/constants.js"></script>
+	<script src="js/fullfillment.js"></script>
+
+</body>
+</html>

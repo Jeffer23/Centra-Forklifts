@@ -1,7 +1,9 @@
 
 (function ($) {
     "use strict";
-    
+    if(sessionStorage.getItem(userIdKey) != null){
+		window.location.href = hostURL + "viewPurchaseOrder.html";
+	}
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -86,13 +88,18 @@
 		var userName = $("#username").val();
 		var pass = $("#pass").val();
 	  $.ajax({
-		  url: "login/validate?userName=" + userName + "&pass=" + pass,
+		  url: "user/login?userName=" + userName + "&pass=" + pass,
 		  success: function(result){
-			  loggedInUserID = result;
-			  
+			  if(result == "" || result == undefined || result == "null") {
+				  alert("UserName or Password is Incorrect");
+			  } else {
+				  sessionStorage.setItem(userIdKey, result);
+				  window.location.href = hostURL + "viewPurchaseOrder.html";
+			  }
 		},
 		 error: function(result){
 			 alert("UserName or Password is Incorrect");
+			 //window.location.href = hostURL;
 		}
 	  });
 	});

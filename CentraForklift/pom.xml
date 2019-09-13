@@ -8,12 +8,12 @@
 		<version>2.1.7.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.centraforklift</groupId>
-	<artifactId>CentraForklift</artifactId>
+	<groupId>com.centraforklifts</groupId>
+	<artifactId>CentraForklifts</artifactId>
 	<version>19.8.2.1</version>
 	<packaging>war</packaging>
-	<name>CentraForklift</name>
-	<description>CentroForklift Application</description>
+	<name>CentraForklifts</name>
+	<description>CentroForklifts Application</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -47,6 +47,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+	                <mainClass>com.cf.CentraForkliftApplication</mainClass>
+	            </configuration>
 			</plugin>
 		</plugins>
 	</build>
