@@ -7,9 +7,11 @@ $(document).ready(function() {
 	if(sessionStorage.getItem(userIdKey) == null){
 		window.location.href = hostURL;
 	}
-	$("#signedInUser").html(sessionStorage.getItem(userIdKey));
+	$("#signedInUser").html(sessionStorage.getItem(userFirstNameKey));
 	$("#signout").on( 'click', function () {
 		sessionStorage.removeItem(userIdKey);
+		sessionStorage.removeItem(userRoleKey);
+		sessionStorage.removeItem(userFirstNameKey);
 		localStorage.removeItem(invoiceIdKey);
 		window.location.href = hostURL;
 	} );
@@ -40,7 +42,7 @@ $(document).ready(function() {
 				"data": "invoice",
 				"render": function(data, type, row, meta){
 					if(type === 'display' && data !== null){
-						data = '<a href="invoice.html" target="_blank" onclick=" return showInvoice(\''+ data.invoiceId +'\')" >View Invoice</a>';
+						data = '<a href="invoice.html" target="_blank" onclick=" return showInvoice(\''+ data.invoiceId +'\')" >#' + data.invoiceId + '</a>';
 					}
 
 					return data;
@@ -100,8 +102,26 @@ $(document).ready(function() {
 		return formatStr;
 	}
  
+    function compare(a, b){
+    	if(a.userID.emailAddress === b.userID.emailAddress && a.billingAddress === b.billingAddress && a.shippingAddress === b.shippingAddress){
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
     function generateInvoice(){
 		var selectedPurchaseOrders = t.rows('.selected').data();
+		var isValid = true;
+		for(var i=0; i<selectedPurchaseOrders.length-1; ){
+			if(!compare(selectedPurchaseOrders[i], selectedPurchaseOrders[++i])){
+				isValid = false;
+				break;
+			}
+		}
+		if(!isValid){
+			alert("Selected Purchase Order doesn't match with either E-Mail Address, Billing Address, Shipping Address");
+			return;
+		}
 		var subTotal = $('#subTotal').val();
 		var discount = $('#discount').val(); 
 		var subTotalLessDiscount = $('#subTotalLessDiscount').val(); 

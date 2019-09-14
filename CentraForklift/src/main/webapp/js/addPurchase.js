@@ -3,9 +3,11 @@ $(document).ready(function() {
 	if(sessionStorage.getItem(userIdKey) == null){
 		window.location.href = hostURL;
 	}
-	$("#signedInUser").html(sessionStorage.getItem(userIdKey));
+	$("#signedInUser").html(sessionStorage.getItem(userFirstNameKey));
 	$("#signout").on( 'click', function () {
 		sessionStorage.removeItem(userIdKey);
+		sessionStorage.removeItem(userRoleKey);
+		sessionStorage.removeItem(userFirstNameKey);
 		localStorage.removeItem(invoiceIdKey);
 		window.location.href = hostURL;
 	} );
@@ -89,8 +91,8 @@ $(document).ready(function() {
     	var purchaseOrder = new Object();
     	purchaseOrder.userID = userID;
     	purchaseOrder.products = selectedProducts;
-    	purchaseOrder.billingAddress = $("#billingAddress").val();
-    	purchaseOrder.shippingAddress = $("#shippingAddress").val();
+    	purchaseOrder.billingAddress = $("#billingAddress").val().trim();
+    	purchaseOrder.shippingAddress = $("#shippingAddress").val().trim();
     	
     	$.ajax({
      		  url: "purchase/addPurchaseOrder",
@@ -139,7 +141,7 @@ $(document).ready(function() {
 	  });
     
     $.ajax({
-		  url: "user/getAllUser",
+		  url: "user/getAllUser?userId=" + sessionStorage.getItem(userIdKey),
 		  success: function(result){
 			  companyDetails = result;
 			  for(var i in result){

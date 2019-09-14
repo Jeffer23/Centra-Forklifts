@@ -23,7 +23,7 @@ $(document).ready(function() {
 				$("#invoiceId").text(order.invoice.invoiceId);
 				$("#invoiceDate").text(order.invoice.invoiceDate.substring(0, 10));
 				$("#dueDate").text(order.invoice.dueDate.substring(0, 10));
-				var tableRows;
+				var tableRows = "";
 				for(var j=0; j<order.products.length; j++){
 					var product =order.products[j];
 					tableRows+='<tr>' +

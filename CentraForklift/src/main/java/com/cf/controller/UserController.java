@@ -22,7 +22,7 @@ public class UserController {
 	UserService service;
 	
 	@RequestMapping("/login")
-	public String validateUser(@RequestParam("userName") String uName, @RequestParam("pass") String pass) {
+	public UserDTO validateUser(@RequestParam("userName") String uName, @RequestParam("pass") String pass) {
 		System.out.println("validateUser method Starts...");
 		return service.isValidUser(uName, pass);
 	}
@@ -34,7 +34,7 @@ public class UserController {
 	}
 	
 	@RequestMapping("/getAllUser")
-	public Map<String, Set<String>> getAllUsers(){
-		return service.getAllUsers();
+	public Map<String, Set<String>> getAllUsers(@RequestParam("userId") String userId){
+		return service.getAllUsers(userId);
 	}
 }

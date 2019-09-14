@@ -2,5 +2,7 @@
  * 
  */
 var hostURL = "http://localhost:8080/CentraForklifts/";
-var userIdKey = "userId";
+var userRoleKey = "userRole";
 var invoiceIdKey = "invoiceId";
+var userFirstNameKey = "ufirstName";
+var userIdKey = "userId";

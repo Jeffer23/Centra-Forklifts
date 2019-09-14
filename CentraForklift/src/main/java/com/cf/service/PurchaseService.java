@@ -75,12 +75,14 @@ public class PurchaseService {
 
 		order = new PurchaseOrderDTO();
 		order.setApprovedDate(null);
-		order.setBillingAddress("S2, Wilson's Anjali Apartment, Madha Nagar 3rd main road, Madhananthapuram, Chennai-600089.");
+		order.setBillingAddress(
+				"S2, Wilson's Anjali Apartment, Madha Nagar 3rd main road, Madhananthapuram, Chennai-600089.");
 		order.setInvoice(null);
 		order.setOrderDate(Calendar.getInstance());
 		order.setOrderStatus("Unapproved");
 		order.setPurchaseOrderID(++purchaseOrderId);
-		order.setShippingAddress("S2, Wilson's Anjali Apartment, Madha Nagar 3rd main road, Madhananthapuram, Chennai-600089.");
+		order.setShippingAddress(
+				"S2, Wilson's Anjali Apartment, Madha Nagar 3rd main road, Madhananthapuram, Chennai-600089.");
 		order.setPurchaseTotalAmount(65250);
 		order.setUserID(UserService.users.get("mani143@gmail.com"));
 
@@ -113,25 +115,28 @@ public class PurchaseService {
 	public List<PurchaseOrderDTO> getAllUnFullfilmentPurchases(String userId) {
 		System.out.println("User ID : " + userId);
 		List<PurchaseOrderDTO> purchaseOrderList = new ArrayList<PurchaseOrderDTO>();
-		if (UserService.users.get(userId).getUserRole().equals("Admin")) {
+		if (UserService.users.get(userId).getUserRole().equalsIgnoreCase("Admin")) {
 			purchaseOrders.values().stream().forEach(orders -> {
-				purchaseOrderList.addAll(orders.stream().filter(order-> order.getOrderStatus().equals("Approved") || order.getOrderStatus().equals("Unapproved")).collect(Collectors.toList()));
+				purchaseOrderList.addAll(orders.stream().filter(order -> order.getOrderStatus().equalsIgnoreCase("Approved")
+						|| order.getOrderStatus().equalsIgnoreCase("Unapproved")).collect(Collectors.toList()));
 			});
-			
-			
-		}else if(UserService.users.get(userId).getUserRole().equals("Dealer")){
+
+		} else if (UserService.users.get(userId).getUserRole().equalsIgnoreCase("Dealer")) {
 			List<PurchaseOrderDTO> orders = purchaseOrders.get(userId);
-			purchaseOrderList.addAll(orders.stream().filter(order-> order.getOrderStatus().equals("Approved") || order.getOrderStatus().equals("Unapproved")).collect(Collectors.toList()));
+			if (orders != null) {
+				purchaseOrderList.addAll(orders.stream().filter(order -> order.getOrderStatus().equalsIgnoreCase("Approved")
+						|| order.getOrderStatus().equalsIgnoreCase("Unapproved")).collect(Collectors.toList()));
+			} 
 		}
-		
+
 		System.out.println(purchaseOrderList);
 		return purchaseOrderList;
 	}
 
 	public List<PurchaseOrderDTO> getFullfilledTabDetails(@RequestParam("userId") String userId) {
 		System.out.println("User ID : " + userId);
-		List<PurchaseOrderDTO> filteredOrders = null;
-		if (UserService.users.get(userId).getUserRole().equals("Admin")) {
+		List<PurchaseOrderDTO> filteredOrders = new ArrayList<PurchaseOrderDTO>();
+		if (UserService.users.get(userId).getUserRole().equalsIgnoreCase("Admin")) {
 			List<PurchaseOrderDTO> allOrders = new ArrayList<PurchaseOrderDTO>();
 			purchaseOrders.values().stream().forEach(orders -> allOrders.addAll(orders));
 			filteredOrders = allOrders.stream().filter(order -> (order.getOrderStatus().equalsIgnoreCase("Approved")
@@ -139,10 +144,14 @@ public class PurchaseService {
 			System.out.println(filteredOrders);
 			return filteredOrders;
 		}
-		
+
 		List<PurchaseOrderDTO> purchaseOrderList = purchaseOrders.get(userId);
-		filteredOrders = purchaseOrderList.stream().filter(order -> (order.getOrderStatus().equalsIgnoreCase("Approved")
-				|| order.getOrderStatus().equalsIgnoreCase("Fullfilled"))).collect(Collectors.toList());
+		if (purchaseOrderList != null) {
+			filteredOrders = purchaseOrderList.stream()
+					.filter(order -> (order.getOrderStatus().equalsIgnoreCase("Approved")
+							|| order.getOrderStatus().equalsIgnoreCase("Fullfilled")))
+					.collect(Collectors.toList());
+		}
 
 		return filteredOrders;
 	}
@@ -162,27 +171,28 @@ public class PurchaseService {
 
 	public boolean fullfillPurchaseOrder(List<PurchaseOrderDTO> purchaseOrders) {
 		System.out.println("purchase Order Id's : " + purchaseOrders);
-		if(purchaseOrders.size() > 0) {
+		if (purchaseOrders.size() > 0) {
 			InvoiceDTO invoice = purchaseOrders.get(0).getInvoice();
 			invoice.setInvoiceId(++invoiceId);
 			invoice.setInvoiceDate(Calendar.getInstance());
 			invoice.setDueDate(Calendar.getInstance());
 			invoice.getDueDate().add(Calendar.DAY_OF_MONTH, 14);
-			invoice.setBalanceDue(invoice.getSubTotalLessDiscount() + invoice.getTotalTax() +invoice.getShippingFee());
+			invoice.setBalanceDue(invoice.getSubTotalLessDiscount() + invoice.getTotalTax() + invoice.getShippingFee());
 			invoices.put(invoice.getInvoiceId(), invoice);
 		}
-		
-		purchaseOrders.stream().forEach(purchaseOrder->{
-			List<PurchaseOrderDTO> orders = PurchaseService.purchaseOrders.get(purchaseOrder.getUserID().getEmailAddress());
-			orders.stream().forEach(order->{
-				if(order.getPurchaseOrderID() == purchaseOrder.getPurchaseOrderID()) {
+
+		purchaseOrders.stream().forEach(purchaseOrder -> {
+			List<PurchaseOrderDTO> orders = PurchaseService.purchaseOrders
+					.get(purchaseOrder.getUserID().getEmailAddress());
+			orders.stream().forEach(order -> {
+				if (order.getPurchaseOrderID() == purchaseOrder.getPurchaseOrderID()) {
 					order.setInvoice(invoices.get(invoiceId));
 					order.setOrderStatus("Fullfilled");
-					
-				}	
+
+				}
 			});
 		});
-		
+
 		return true;
 	}
 
@@ -195,28 +205,33 @@ public class PurchaseService {
 		purchaseOrder.setPurchaseTotalAmount((float) purchaseOrder.getProducts().stream()
 				.mapToDouble(product -> product.getTotalAmount()).reduce(0, Double::sum));
 
-		purchaseOrders.get(purchaseOrder.getUserID().getEmailAddress()).add(purchaseOrder);
+		if (purchaseOrders.get(purchaseOrder.getUserID().getEmailAddress()) == null) {
+			List<PurchaseOrderDTO> orders = new ArrayList<PurchaseOrderDTO>();
+			orders.add(purchaseOrder);
+			purchaseOrders.put(purchaseOrder.getUserID().getEmailAddress(), orders);
+		} else {
+			purchaseOrders.get(purchaseOrder.getUserID().getEmailAddress()).add(purchaseOrder);
+		}
+
 		return true;
 	}
 
 	public List<ProductDTO> getAllProducts() {
 		return products;
 	}
-	
-	public List<PurchaseOrderDTO> getInvoiceDetails(int invoiceId){
-		System.out.println("Invoice Id : " +  invoiceId);
+
+	public List<PurchaseOrderDTO> getInvoiceDetails(int invoiceId) {
+		System.out.println("Invoice Id : " + invoiceId);
 		InvoiceDTO invoice = invoices.get(invoiceId);
 		List<PurchaseOrderDTO> orders = new ArrayList<>();
-		purchaseOrders.values().stream().forEach(order->orders.addAll(order));
+		purchaseOrders.values().stream().forEach(order -> orders.addAll(order));
 		System.out.println("Size : " + orders.size());
-		List<PurchaseOrderDTO> filteredOrders = orders.stream().filter(
-					order-> {
-						if(order.getInvoice() != null)
-							return order.getInvoice().getInvoiceId() == invoiceId;
-						else 
-							return false;
-					}
-			).collect(Collectors.toList());
+		List<PurchaseOrderDTO> filteredOrders = orders.stream().filter(order -> {
+			if (order.getInvoice() != null)
+				return order.getInvoice().getInvoiceId() == invoiceId;
+			else
+				return false;
+		}).collect(Collectors.toList());
 		System.out.println(filteredOrders);
 		return filteredOrders;
 	}

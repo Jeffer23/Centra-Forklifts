@@ -3,12 +3,19 @@ $(document).ready(function() {
 	if(sessionStorage.getItem(userIdKey) == null){
 		window.location.href = hostURL;
 	}
-	$("#signedInUser").html(sessionStorage.getItem(userIdKey));
+	$("#signedInUser").html(sessionStorage.getItem(userFirstNameKey));
 	$("#signout").on( 'click', function () {
 		sessionStorage.removeItem(userIdKey);
+		sessionStorage.removeItem(userRoleKey);
+		sessionStorage.removeItem(userFirstNameKey);
 		localStorage.removeItem(invoiceIdKey);
 		window.location.href = hostURL;
 	} );
+	
+	if(sessionStorage.getItem(userRoleKey) == 'dealer'){
+		$("#approve").hide();
+		$("#fullfillmentLink").hide();
+	}
 	
     var t = $('#invoiceTB').DataTable({
 		"ajax": {

@@ -93,7 +93,9 @@
 			  if(result == "" || result == undefined || result == "null") {
 				  alert("UserName or Password is Incorrect");
 			  } else {
-				  sessionStorage.setItem(userIdKey, result);
+				  sessionStorage.setItem(userIdKey, result.emailAddress);
+				  sessionStorage.setItem(userRoleKey, result.userRole);
+				  sessionStorage.setItem(userFirstNameKey, result.firstName);
 				  window.location.href = hostURL + "viewPurchaseOrder.html";
 			  }
 		},
