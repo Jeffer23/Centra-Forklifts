@@ -16,8 +16,46 @@ $(document).ready(function() {
 		window.location.href = hostURL;
 	} );
 	
+	function removedSelected(){
+		var rows = $('#fullfillmentTB > tbody > tr');
+		console.log(rows);
+	}
+	
 	$("#email").on( 'click', function () {
-		alert("Functionality Under Construction");
+		var selectedPurchaseOrders = t.rows('.selected').data();
+		var isValid = true;
+		for(var i=0; i<selectedPurchaseOrders.length; i++){
+			var selectedPurchaseOrder = selectedPurchaseOrders[i];
+			if(selectedPurchaseOrder.invoice == null){
+				isValid = false;
+				break;
+			}
+		}
+		if(!isValid){
+			alert("Some selected Orders are not fullfilled.");
+			return;
+		}
+		
+		var sentInvoiceIds = [];
+		for(var i=0; i<selectedPurchaseOrders.length; i++){
+			var selectedPurchaseOrder = selectedPurchaseOrders[i];
+			var invoiceId = selectedPurchaseOrder.invoice.invoiceId;
+			var userId = selectedPurchaseOrder.userID.emailAddress;
+			
+			if(!sentInvoiceIds.includes(invoiceId)){
+				sentInvoiceIds.push(invoiceId);
+				$.ajax({
+				  url: "user/sendEmail?userId=" + userId + "&invoiceId=" + invoiceId,
+				  success: function(result){
+					  alert("E-mail sent Successfully!!!");
+					},
+					 error: function(result){
+						 alert("Error is Sending email. Please try again after sometime or contact Admin.");
+					}
+				 });
+			}
+		}
+		removedSelected();
 	} );
 	
 	var t = $('#fullfillmentTB').DataTable({
@@ -122,6 +160,19 @@ $(document).ready(function() {
 			alert("Selected Purchase Order doesn't match with either E-Mail Address, Billing Address, Shipping Address");
 			return;
 		}
+		
+		for(var i=0; i<selectedPurchaseOrders.length; i++){
+			var selectedPurchaseOrder = selectedPurchaseOrders[i];
+			if(selectedPurchaseOrder.invoice != null){
+				isValid = false;
+				break;
+			}
+		}
+		if(!isValid){
+			alert("Some Selected Purchase Order is already fullfilled.");
+			return;
+		}
+		
 		var subTotal = $('#subTotal').val();
 		var discount = $('#discount').val(); 
 		var subTotalLessDiscount = $('#subTotalLessDiscount').val(); 

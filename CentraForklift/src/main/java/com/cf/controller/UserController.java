@@ -37,4 +37,9 @@ public class UserController {
 	public Map<String, Set<String>> getAllUsers(@RequestParam("userId") String userId){
 		return service.getAllUsers(userId);
 	}
+	
+	@RequestMapping("/sendEmail")
+	public void sendEmail(@RequestParam("invoiceId") int invoiceId, @RequestParam("userId") String userId){
+		service.sendEmail(invoiceId, userId);
+	}
 }

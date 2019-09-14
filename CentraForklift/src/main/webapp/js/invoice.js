@@ -4,7 +4,11 @@ $(document).ready(function() {
 		window.location.href = hostURL;
 	}
 	
-	var invoiceId = localStorage.getItem(invoiceIdKey);
+	function getQueryStringValue (key) {  
+		  return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));  
+		}  
+
+	var invoiceId = getQueryStringValue(invoiceIdKey);
 	
 	$.ajax({
 		  url: "purchase/getInvoiceDetails?invoiceId=" + invoiceId,

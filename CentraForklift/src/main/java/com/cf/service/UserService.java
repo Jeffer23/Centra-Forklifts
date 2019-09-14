@@ -7,8 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cf.dto.UserDTO;
+import com.cf.email.EmailBL;
 
 @Service
 public class UserService {
@@ -92,9 +94,15 @@ public class UserService {
 		return userDetails;
 	}
 
-	public static void main(String[] args) {
-		Map<Integer, String> values = new HashMap<Integer, String>();
-		System.out.println(values.put(1, "ONE"));
-		System.out.println(values.put(1, "ONE"));
+	public void sendEmail(int invoiceId, String userId){
+		System.out.println("Send E-mail -> Invoice Id : " + invoiceId);
+		System.out.println("Send E-mail -> User Id : " + userId);
+		EmailBL email = new EmailBL();
+		try {
+			String messageBody = email.getInvoiceHTMLContent(invoiceId);
+			email.sendEmail(userId, messageBody, invoiceId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

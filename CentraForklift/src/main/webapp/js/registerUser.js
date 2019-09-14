@@ -20,10 +20,13 @@ $(document)
 										var userRole = $('#userRole').val();
 										var address = $('#address').val();
 
-										if (password == undefined
-												|| password == ""
-												|| retypePassword == undefined
-												|| retypePassword == "") {
+										if (password == ""
+												|| retypePassword == ""
+												|| emailId == ""
+												|| firstName == ""
+												|| phone == "" || company == ""
+												|| userRole == ""
+												|| address == "") {
 											alert("All fields are Mandatory. Please make sure you entered all details ");
 										}
 
@@ -40,21 +43,24 @@ $(document)
 										userDTO.companyName = company;
 										userDTO.address = address;
 										userDTO.password = password;
-										
+
 										console.log(userDTO);
 
 										// Ajax call to get the register User
-										$.ajax({
-								     		  url: "user/register",
-								     		  type : "POST",
-								     		  dataType: 'json',
-								     		  contentType: "application/json",
-								     		  data: JSON.stringify(userDTO),
-								     		  success: function(result){
-								  	   			alert("User Registered Successfully!!")
-								  	   			window.location.href = hostURL + "login.html"
-								     		  }
-								      	 });
+										$
+												.ajax({
+													url : "user/register",
+													type : "POST",
+													dataType : 'json',
+													contentType : "application/json",
+													data : JSON
+															.stringify(userDTO),
+													success : function(result) {
+														alert("User Registered Successfully!!")
+														window.location.href = hostURL
+																+ "login.html"
+													}
+												});
 
 									});
 
