@@ -1,6 +1,10 @@
 package com.cf.dto;
 
-public class UserDTO {
+import java.io.Serializable;
+
+public class UserDTO implements Serializable{
+	
+	private static final long serialVersionUID = 2338378953945562327L;
 	private String lastName;
 	private String firstName;
 	private long phoneNumber;

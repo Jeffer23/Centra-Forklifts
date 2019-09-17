@@ -1,0 +1,67 @@
+mysql> show fields from product;
++---------------------+--------------+------+-----+---------+----------------+
+| Field               | Type         | Null | Key | Default | Extra          |
++---------------------+--------------+------+-----+---------+----------------+
+| PRODUCT_ID          | int(11)      | NO   | PRI | NULL    | auto_increment |
+| PRODUCT_NAME        | varchar(255) | YES  |     | NULL    |                |
+| PRODUCT_DESCRIPTION | varchar(255) | YES  |     | NULL    |                |
+| UNIT_PRICE          | float        | YES  |     | NULL    |                |
++---------------------+--------------+------+-----+---------+----------------+
+
+
+mysql> show fields from users;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| LAST_NAME     | varchar(255) | YES  |     | NULL    |       |
+| FIRST_NAME    | varchar(255) | YES  |     | NULL    |       |
+| PHONE_NUMBER  | bigint(20)   | YES  |     | NULL    |       |
+| EMAIL_ADDRESS | varchar(255) | NO   | PRI | NULL    |       |
+| USER_ROLE     | varchar(255) | YES  |     | NULL    |       |
+| COMPANY_NAME  | varchar(255) | YES  |     | NULL    |       |
+| ADDRESS       | varchar(255) | YES  |     | NULL    |       |
+| USER_PASSWORD | varchar(255) | YES  |     | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+
+mysql> show fields from invoice;
++-------------------------+------------+------+-----+---------+----------------+
+| Field                   | Type       | Null | Key | Default | Extra          |
++-------------------------+------------+------+-----+---------+----------------+
+| INVOICE_ID              | bigint(20) | NO   | PRI | NULL    | auto_increment |
+| invoice_date            | date       | YES  |     | NULL    |                |
+| due_date                | date       | YES  |     | NULL    |                |
+| SUB_TOTAL               | float      | YES  |     | NULL    |                |
+| DISCOUNT                | float      | YES  |     | NULL    |                |
+| SUB_TOTAL_LESS_DISCOUNT | float      | YES  |     | NULL    |                |
+| TAX_RATE                | float      | YES  |     | NULL    |                |
+| TOTAL_TAX               | float      | YES  |     | NULL    |                |
+| SHIPPING_FEE            | float      | YES  |     | NULL    |                |
+| BALANCE_DUE             | float      | YES  |     | NULL    |                |
++-------------------------+------------+------+-----+---------+----------------+
+
+mysql> show fields from purchase_order;
++-----------------------+--------------+------+-----+---------+----------------+
+| Field                 | Type         | Null | Key | Default | Extra          |
++-----------------------+--------------+------+-----+---------+----------------+
+| PURCHASE_ORDER_ID     | bigint(20)   | NO   | PRI | NULL    | auto_increment |
+| USER_ID               | varchar(255) | YES  | MUL | NULL    |                |
+| INVOICE_ID            | bigint(20)   | YES  | MUL | NULL    |                |
+| ORDER_DATE            | date         | YES  |     | NULL    |                |
+| ORDER_STATUS          | varchar(255) | YES  |     | NULL    |                |
+| APPROVED_DATE         | date         | YES  |     | NULL    |                |
+| BILLING_ADDRESS       | varchar(255) | YES  |     | NULL    |                |
+| SHIPPING_ADDRESS      | varchar(255) | YES  |     | NULL    |                |
+| PURCHASE_TOTAL_AMOUNT | float        | YES  |     | NULL    |                |
++-----------------------+--------------+------+-----+---------+----------------+
+
+
+mysql> show fields from purchase_product;
++---------------------+------------+------+-----+---------+----------------+
+| Field               | Type       | Null | Key | Default | Extra          |
++---------------------+------------+------+-----+---------+----------------+
+| PURCHASE_PRODUCT_ID | bigint(20) | NO   | PRI | NULL    | auto_increment |
+| PRODUCT_ID          | int(11)    | YES  | MUL | NULL    |                |
+| QUANTITY            | int(11)    | YES  |     | NULL    |                |
+| TOTAL_AMOUNT        | float      | YES  |     | NULL    |                |
+| PURCHASE_ORDER_ID   | bigint(20) | YES  | MUL | NULL    |                |
++---------------------+------------+------+-----+---------+----------------+

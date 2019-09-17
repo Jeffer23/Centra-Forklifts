@@ -55,7 +55,7 @@ $(document).ready(function() {
         }
         else {
             // Open this row
-            row.child( format(row.data().products) ).show();
+            row.child( format(row.data().purchaseProducts) ).show();
             tr.addClass('shown');
         }
     } );
@@ -112,5 +112,17 @@ $(document).ready(function() {
 		//console.log(formatStr);
 		return formatStr;
 	}
+	
+	 $('#syncWithFerret').click( function () {
+		 $.ajax({
+			  url: "purchase/syncWithFerretApp",
+			  success: function(result){
+				  alert("Sync Successfull!!!");
+				},
+				 error: function(result){
+					 alert("Error is Syncing with Ferret Application. Please try again after sometime or contact Admin.");
+				}
+			 });
+	 });
 	
 } );

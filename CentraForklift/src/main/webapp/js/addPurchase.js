@@ -90,7 +90,7 @@ $(document).ready(function() {
     	
     	var purchaseOrder = new Object();
     	purchaseOrder.userID = userID;
-    	purchaseOrder.products = selectedProducts;
+    	purchaseOrder.purchaseProducts = selectedProducts;
     	purchaseOrder.billingAddress = $("#billingAddress").val().trim();
     	purchaseOrder.shippingAddress = $("#shippingAddress").val().trim();
     	

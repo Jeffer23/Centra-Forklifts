@@ -3,14 +3,18 @@ package com.cf.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.cf.dao.UserDao;
+import com.cf.dao.impl.UserDaoImpl;
 import com.cf.dto.UserDTO;
 import com.cf.email.EmailBL;
+import com.cf.entity.User;
 
 @Service
 public class UserService {
@@ -44,32 +48,49 @@ public class UserService {
 
 	}
 
-	public UserDTO isValidUser(String uName, String pass) {
-		System.out.println("User Name : " + uName);
+	public UserDTO isValidUser(String userId, String pass) {
+		System.out.println("User Id : " + userId);
 		System.out.println("Password : " + pass);
 
-		UserDTO user = users.get(uName);
-		if (user == null) {
-			return null;
+		UserDao dao = new UserDaoImpl();
+		User user = dao.getUser(userId);
+		if(null != user && user.getPassword().equals(pass)) {
+			UserDTO dto = new UserDTO();
+			dto.setAddress(user.getAddress());
+			dto.setCompanyName(user.getCompanyName());
+			dto.setEmailAddress(user.getEmailAddress());
+			dto.setFirstName(user.getFirstName());
+			dto.setLastName(user.getLastName());
+			dto.setPhoneNumber(user.getPhoneNumber());
+			dto.setUserRole(user.getUserRole());
+			return dto;
 		}
-
-		return user;
+		return null;
 	}
 
-	public boolean registerUser(UserDTO user) {
-		boolean userExists = users.keySet().stream().anyMatch(email -> email.equalsIgnoreCase(user.getEmailAddress()));
-		if (!userExists) {
-			users.put(user.getEmailAddress(), user);
-			return true;
-		}
-		return false;
+	public boolean registerUser(UserDTO userDTO) {
+		UserDao dao = new UserDaoImpl();
+		User user = new User();
+		user.setAddress(userDTO.getAddress());
+		user.setCompanyName(userDTO.getCompanyName());
+		user.setEmailAddress(userDTO.getEmailAddress());
+		user.setFirstName(userDTO.getFirstName());
+		user.setLastName(userDTO.getLastName());
+		user.setPassword(userDTO.getPassword());
+		user.setPhoneNumber(userDTO.getPhoneNumber());
+		user.setUserRole(userDTO.getUserRole());
+		
+		return dao.saveUser(user);
 	}
 
 	public Map<String, Set<String>> getAllUsers(String userId) {
+		UserDao dao = new UserDaoImpl();
 		Map<String, Set<String>> userDetails = new HashMap<String, Set<String>>();
-		UserDTO userDTO = users.get(userId);
-		if (userDTO.getUserRole().equalsIgnoreCase("Admin")) {
-			users.values().stream().forEach(user -> {
+		User userEntity = dao.getUser(userId);
+		List<User> userEntities = dao.getAllUsers();
+		
+		if (userEntity.getUserRole().equalsIgnoreCase("Admin")) {
+			userEntities.stream().forEach(user -> {
 				if (userDetails.get(user.getCompanyName()) == null) {
 					Set<String> emailIds = new HashSet<String>();
 					emailIds.add(user.getEmailAddress());
@@ -79,16 +100,16 @@ public class UserService {
 					emailIds.add(user.getEmailAddress());
 				}
 			});
-		} else if (userDTO.getUserRole().equalsIgnoreCase("Dealer")) {
-			Set<String> emailIds = userDetails.get(userDTO.getCompanyName());
+		} else if (userEntity.getUserRole().equalsIgnoreCase("Dealer")) {
+			Set<String> emailIds = userDetails.get(userEntity.getCompanyName());
 			if(emailIds != null) {
-				emailIds.add(userDTO.getEmailAddress());
+				emailIds.add(userEntity.getEmailAddress());
 			}
 			else {
 				emailIds = new HashSet<String>();
-				emailIds.add(userDTO.getEmailAddress());
+				emailIds.add(userEntity.getEmailAddress());
 			}
-			userDetails.put(userDTO.getCompanyName(), emailIds);
+			userDetails.put(userEntity.getCompanyName(), emailIds);
 		}
 
 		return userDetails;
@@ -99,8 +120,8 @@ public class UserService {
 		System.out.println("Send E-mail -> User Id : " + userId);
 		EmailBL email = new EmailBL();
 		try {
-			String messageBody = email.getInvoiceHTMLContent(invoiceId);
-			email.sendEmail(userId, messageBody, invoiceId);
+			email.getInvoiceHTMLContent(invoiceId);
+			email.sendEmail(userId, "", invoiceId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

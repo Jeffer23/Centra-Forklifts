@@ -1,9 +1,6 @@
 
 $(document).ready(function() {
-	if(sessionStorage.getItem(userIdKey) == null){
-		window.location.href = hostURL;
-	}
-	
+		
 	function getQueryStringValue (key) {  
 		  return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));  
 		}  
@@ -28,8 +25,8 @@ $(document).ready(function() {
 				$("#invoiceDate").text(order.invoice.invoiceDate.substring(0, 10));
 				$("#dueDate").text(order.invoice.dueDate.substring(0, 10));
 				var tableRows = "";
-				for(var j=0; j<order.products.length; j++){
-					var product =order.products[j];
+				for(var j=0; j<order.purchaseProducts.length; j++){
+					var product =order.purchaseProducts[j];
 					tableRows+='<tr>' +
 						'<td class="desc"><h3>Purchase Order : #'+ order.purchaseOrderID +'</h3>' + product.product.productName +'</td>' +
 						'<td class="qty">' + product.quantity + '</td>' +
@@ -43,6 +40,7 @@ $(document).ready(function() {
 				$("#subTotalLessDiscount").text(order.invoice.subTotalLessDiscount);
 				$("#taxRate").text(order.invoice.taxRate);
 				$("#totalTax").text(order.invoice.totalTax);
+				$("#shippingFee").text(order.invoice.shippingFee);
 				$("#balanceDue").text(order.invoice.balanceDue);
 				
 			  }

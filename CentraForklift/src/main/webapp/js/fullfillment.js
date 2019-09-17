@@ -80,7 +80,7 @@ $(document).ready(function() {
 				"data": "invoice",
 				"render": function(data, type, row, meta){
 					if(type === 'display' && data !== null){
-						data = '<a href="invoice.html" target="_blank" onclick=" return showInvoice(\''+ data.invoiceId +'\')" >#' + data.invoiceId + '</a>';
+						data = '<a href="invoice.html?invoiceId=' + data.invoiceId + '" target="_blank" onclick="return showInvoice(\''+ data.invoiceId +'\')" >#' + data.invoiceId + '</a>';
 					}
 
 					return data;
@@ -107,7 +107,7 @@ $(document).ready(function() {
         }
         else {
             // Open this row
-            row.child( format(row.data().products) ).show();
+            row.child( format(row.data().purchaseProducts) ).show();
             tr.addClass('shown');
         }
     } );

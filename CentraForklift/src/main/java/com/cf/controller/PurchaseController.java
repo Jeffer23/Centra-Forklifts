@@ -6,9 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cf.dto.InvoiceDTO;
-import com.cf.dto.ProductDTO;
-import com.cf.dto.PurchaseOrderDTO;
+import com.cf.entity.Product;
+import com.cf.entity.PurchaseOrder;
 import com.cf.service.PurchaseService;
 
 import java.util.ArrayList;
@@ -23,13 +22,13 @@ public class PurchaseController {
 	@Autowired
 	private PurchaseService service;
 	
-	@RequestMapping("/getInvoiceTabDetails")
-	public List<PurchaseOrderDTO> getAllUnFullfilmentPurchases(@RequestParam("userId") String userId) {
+	@RequestMapping(path="/getInvoiceTabDetails", produces = "application/json")
+	public List<PurchaseOrder> getAllUnFullfilmentPurchases(@RequestParam("userId") String userId) {
 		return service.getAllUnFullfilmentPurchases(userId);
 	}
 	
 	@RequestMapping("/getFullfilledTabDetails")
-	public List<PurchaseOrderDTO> getFullfilledTabDetails(@RequestParam("userId") String userId) {
+	public List<PurchaseOrder> getFullfilledTabDetails(@RequestParam("userId") String userId) {
 		return service.getFullfilledTabDetails(userId);
 	}
 	
@@ -39,22 +38,31 @@ public class PurchaseController {
 	}
 	
 	@PostMapping("/fullfillPurchaseOrder")
-	public boolean fullfillPurchaseOrder(@RequestBody List<PurchaseOrderDTO> purchaseOrders) {
+	public boolean fullfillPurchaseOrder(@RequestBody List<PurchaseOrder> purchaseOrders) {
 		return service.fullfillPurchaseOrder(purchaseOrders);
 	}
 	
 	@PostMapping("/addPurchaseOrder")
-	public boolean addPurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrder) {
+	public boolean addPurchaseOrder(@RequestBody PurchaseOrder purchaseOrder) {
 		return service.addPurchaseOrder(purchaseOrder);
 	}
 	
 	@RequestMapping("/getAllProducts")
-	public List<ProductDTO> getAllProducts(){
+	public List<Product> getAllProducts(){
 		return service.getAllProducts();
 	}
 	
 	@RequestMapping("/getInvoiceDetails")
-	public List<PurchaseOrderDTO> getInvoiceDetails(@RequestParam("invoiceId") int invoiceId){
+	public List<PurchaseOrder> getInvoiceDetails(@RequestParam("invoiceId") int invoiceId){
 		return service.getInvoiceDetails(invoiceId);
+	}
+	
+	@RequestMapping("/syncWithFerretApp")
+	public void syncWithFerretDB() {
+		service.syncWithFerretDB();
+	}
+	public static void main(String[] args) {
+		PurchaseController controller = new PurchaseController();
+		controller.getAllUnFullfilmentPurchases("pemelajefferson@gmail.com");
 	}
 }

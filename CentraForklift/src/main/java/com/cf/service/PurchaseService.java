@@ -10,229 +10,117 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.cf.dto.InvoiceDTO;
-import com.cf.dto.ProductDTO;
-import com.cf.dto.PurchaseOrderDTO;
-import com.cf.dto.PurchaseProductDTO;
+import com.cf.dao.PurchaseDao;
+import com.cf.dao.UserDao;
+import com.cf.dao.impl.PurchaseDaoImpl;
+import com.cf.dao.impl.UserDaoImpl;
 import com.cf.dto.UserDTO;
+import com.cf.entity.Invoice;
+import com.cf.entity.Product;
+import com.cf.entity.PurchaseOrder;
+import com.cf.entity.User;
+import com.cf.ferret.FerretApp;
 
 @Service
 public class PurchaseService {
 
-	public static List<ProductDTO> products = new ArrayList<ProductDTO>();
-	public static Map<String, List<PurchaseOrderDTO>> purchaseOrders = new HashMap<String, List<PurchaseOrderDTO>>();
-	public static Map<Integer, InvoiceDTO> invoices = new HashMap<Integer, InvoiceDTO>();
-	public static int purchaseOrderId = 10000;
-	public static int invoiceId = 30000;
 
-	static {
-		ProductDTO product = new ProductDTO();
-		product.setProductId(1);
-		product.setProductName("Pen");
-		product.setUnitPrice(10);
-		products.add(product);
-
-		product = new ProductDTO();
-		product.setProductId(2);
-		product.setProductName("Phone");
-		product.setUnitPrice(15000);
-		products.add(product);
-
-		product = new ProductDTO();
-		product.setProductId(3);
-		product.setProductName("Laptop");
-		product.setUnitPrice(50000);
-		products.add(product);
-	}
-	static {
-		List<PurchaseOrderDTO> orders = new ArrayList<PurchaseOrderDTO>();
-		PurchaseOrderDTO order = new PurchaseOrderDTO();
-		order.setApprovedDate(Calendar.getInstance());
-		order.setBillingAddress("No:16, 5th cross, 1st street, Ammayappa Nagar, Vayalur Rode, Trichy-620017.");
-		order.setInvoice(null);
-		order.setOrderDate(Calendar.getInstance());
-		order.setOrderStatus("Approved");
-		order.setPurchaseOrderID(++purchaseOrderId);
-		order.setShippingAddress("No:16, 5th cross, 1st street, Ammayappa Nagar, Vayalur Rode, Trichy-620017.");
-		order.setPurchaseTotalAmount(15100);
-		order.setUserID(UserService.users.get("mani143@gmail.com"));
-
-		PurchaseProductDTO purchaseProduct = new PurchaseProductDTO();
-		purchaseProduct.setProduct(products.get(0));
-		purchaseProduct.setPurchaseProductId(10001);
-		purchaseProduct.setQuantity(10);
-		purchaseProduct.setTotalAmount(100);
-		order.getProducts().add(purchaseProduct);
-
-		purchaseProduct = new PurchaseProductDTO();
-		purchaseProduct.setProduct(products.get(1));
-		purchaseProduct.setPurchaseProductId(10002);
-		purchaseProduct.setQuantity(1);
-		purchaseProduct.setTotalAmount(15000);
-		order.getProducts().add(purchaseProduct);
-
-		orders.add(order);
-
-		order = new PurchaseOrderDTO();
-		order.setApprovedDate(null);
-		order.setBillingAddress(
-				"S2, Wilson's Anjali Apartment, Madha Nagar 3rd main road, Madhananthapuram, Chennai-600089.");
-		order.setInvoice(null);
-		order.setOrderDate(Calendar.getInstance());
-		order.setOrderStatus("Unapproved");
-		order.setPurchaseOrderID(++purchaseOrderId);
-		order.setShippingAddress(
-				"S2, Wilson's Anjali Apartment, Madha Nagar 3rd main road, Madhananthapuram, Chennai-600089.");
-		order.setPurchaseTotalAmount(65250);
-		order.setUserID(UserService.users.get("mani143@gmail.com"));
-
-		purchaseProduct = new PurchaseProductDTO();
-		purchaseProduct.setProduct(products.get(2));
-		purchaseProduct.setPurchaseProductId(10003);
-		purchaseProduct.setQuantity(1);
-		purchaseProduct.setTotalAmount(50000);
-		order.getProducts().add(purchaseProduct);
-
-		purchaseProduct = new PurchaseProductDTO();
-		purchaseProduct.setProduct(products.get(0));
-		purchaseProduct.setPurchaseProductId(10004);
-		purchaseProduct.setQuantity(25);
-		purchaseProduct.setTotalAmount(250);
-		order.getProducts().add(purchaseProduct);
-
-		purchaseProduct = new PurchaseProductDTO();
-		purchaseProduct.setProduct(products.get(1));
-		purchaseProduct.setPurchaseProductId(10005);
-		purchaseProduct.setQuantity(1);
-		purchaseProduct.setTotalAmount(15000);
-		order.getProducts().add(purchaseProduct);
-
-		orders.add(order);
-
-		purchaseOrders.put("mani143@gmail.com", orders);
-	}
-
-	public List<PurchaseOrderDTO> getAllUnFullfilmentPurchases(String userId) {
+	public List<PurchaseOrder> getAllUnFullfilmentPurchases(String userId) {
 		System.out.println("User ID : " + userId);
-		List<PurchaseOrderDTO> purchaseOrderList = new ArrayList<PurchaseOrderDTO>();
-		if (UserService.users.get(userId).getUserRole().equalsIgnoreCase("Admin")) {
-			purchaseOrders.values().stream().forEach(orders -> {
-				purchaseOrderList.addAll(orders.stream().filter(order -> order.getOrderStatus().equalsIgnoreCase("Approved")
-						|| order.getOrderStatus().equalsIgnoreCase("Unapproved")).collect(Collectors.toList()));
-			});
-
-		} else if (UserService.users.get(userId).getUserRole().equalsIgnoreCase("Dealer")) {
-			List<PurchaseOrderDTO> orders = purchaseOrders.get(userId);
-			if (orders != null) {
-				purchaseOrderList.addAll(orders.stream().filter(order -> order.getOrderStatus().equalsIgnoreCase("Approved")
-						|| order.getOrderStatus().equalsIgnoreCase("Unapproved")).collect(Collectors.toList()));
-			} 
+		UserDao userDao = new UserDaoImpl();
+		PurchaseDao purchaseDao = new PurchaseDaoImpl();
+		List<PurchaseOrder> purchaseOrderEntities= null;
+		User user = userDao.getUser(userId);
+		if(user.getUserRole().equalsIgnoreCase("admin")) {
+			purchaseOrderEntities = purchaseDao.getAllViewPurchaseOrderDetails();
+		} else if(user.getUserRole().equalsIgnoreCase("dealer")) {
+			purchaseOrderEntities = purchaseDao.getViewPurchaseOrderDetails(userId);
 		}
+		
 
-		System.out.println(purchaseOrderList);
-		return purchaseOrderList;
+		System.out.println(purchaseOrderEntities);
+		return purchaseOrderEntities;
 	}
 
-	public List<PurchaseOrderDTO> getFullfilledTabDetails(@RequestParam("userId") String userId) {
+	public List<PurchaseOrder> getFullfilledTabDetails(@RequestParam("userId") String userId) {
 		System.out.println("User ID : " + userId);
-		List<PurchaseOrderDTO> filteredOrders = new ArrayList<PurchaseOrderDTO>();
-		if (UserService.users.get(userId).getUserRole().equalsIgnoreCase("Admin")) {
-			List<PurchaseOrderDTO> allOrders = new ArrayList<PurchaseOrderDTO>();
-			purchaseOrders.values().stream().forEach(orders -> allOrders.addAll(orders));
-			filteredOrders = allOrders.stream().filter(order -> (order.getOrderStatus().equalsIgnoreCase("Approved")
-					|| order.getOrderStatus().equalsIgnoreCase("Fullfilled"))).collect(Collectors.toList());
-			System.out.println(filteredOrders);
-			return filteredOrders;
+		UserDao userDao = new UserDaoImpl();
+		PurchaseDao purchaseDao = new PurchaseDaoImpl();
+		List<PurchaseOrder> purchaseOrderEntities= null;
+		User user = userDao.getUser(userId);
+		if(user.getUserRole().equalsIgnoreCase("admin")) {
+			purchaseOrderEntities = purchaseDao.getAllFullfillmentDetails();
+		} else if(user.getUserRole().equalsIgnoreCase("dealer")) {
+			purchaseOrderEntities = purchaseDao.getFullfillmentDetails(userId);
 		}
+		
 
-		List<PurchaseOrderDTO> purchaseOrderList = purchaseOrders.get(userId);
-		if (purchaseOrderList != null) {
-			filteredOrders = purchaseOrderList.stream()
-					.filter(order -> (order.getOrderStatus().equalsIgnoreCase("Approved")
-							|| order.getOrderStatus().equalsIgnoreCase("Fullfilled")))
-					.collect(Collectors.toList());
-		}
-
-		return filteredOrders;
+		System.out.println(purchaseOrderEntities);
+		return purchaseOrderEntities;
 	}
 
 	public boolean updatePurchaseOrderStatus(List<Long> purchaseOrderIds) {
 		System.out.println("purchase Order Id's : " + purchaseOrderIds);
-
-		purchaseOrders.values().parallelStream().forEach(orders -> orders.stream().forEach(order -> {
-			if (purchaseOrderIds.contains(order.getPurchaseOrderID())) {
-				order.setOrderStatus("Approved");
-				order.setApprovedDate(Calendar.getInstance());
-			}
-		}));
-
+		PurchaseDao purchaseDao = new PurchaseDaoImpl();
+		purchaseOrderIds.parallelStream().forEach(purchaseOrderId->{
+			PurchaseOrder purchaseOrder = purchaseDao.getPurchaseOrder(purchaseOrderId);
+			purchaseOrder.setOrderStatus("Approved");
+			purchaseOrder.setApprovedDate(Calendar.getInstance());
+			
+			purchaseDao.updatePurchaseOrder(purchaseOrder);
+		});
+		
 		return true;
 	}
 
-	public boolean fullfillPurchaseOrder(List<PurchaseOrderDTO> purchaseOrders) {
+	public boolean fullfillPurchaseOrder(List<PurchaseOrder> purchaseOrders) {
 		System.out.println("purchase Order Id's : " + purchaseOrders);
-		if (purchaseOrders.size() > 0) {
-			InvoiceDTO invoice = purchaseOrders.get(0).getInvoice();
-			invoice.setInvoiceId(++invoiceId);
+		PurchaseDao purchaseDao = new PurchaseDaoImpl();
+		purchaseOrders.parallelStream().forEach(order->{
+			Invoice invoice = order.getInvoice();
 			invoice.setInvoiceDate(Calendar.getInstance());
 			invoice.setDueDate(Calendar.getInstance());
 			invoice.getDueDate().add(Calendar.DAY_OF_MONTH, 14);
 			invoice.setBalanceDue(invoice.getSubTotalLessDiscount() + invoice.getTotalTax() + invoice.getShippingFee());
-			invoices.put(invoice.getInvoiceId(), invoice);
-		}
-
-		purchaseOrders.stream().forEach(purchaseOrder -> {
-			List<PurchaseOrderDTO> orders = PurchaseService.purchaseOrders
-					.get(purchaseOrder.getUserID().getEmailAddress());
-			orders.stream().forEach(order -> {
-				if (order.getPurchaseOrderID() == purchaseOrder.getPurchaseOrderID()) {
-					order.setInvoice(invoices.get(invoiceId));
-					order.setOrderStatus("Fullfilled");
-
-				}
-			});
+			
+			order.setOrderStatus("Fullfilled");
+			purchaseDao.updatePurchaseOrder(order);
 		});
 
 		return true;
 	}
 
-	public boolean addPurchaseOrder(PurchaseOrderDTO purchaseOrder) {
+	public boolean addPurchaseOrder(PurchaseOrder purchaseOrder) {
 		System.out.println(purchaseOrder);
-		UserDTO userDTO = UserService.users.get(purchaseOrder.getUserID().getEmailAddress());
-		purchaseOrder.setUserID(userDTO);
-		purchaseOrder.setPurchaseOrderID(++purchaseOrderId);
+		UserDao userDao = new UserDaoImpl();
+		PurchaseDao purchaseDao = new PurchaseDaoImpl();
+		
+		User user = userDao.getUser(purchaseOrder.getUserID().getEmailAddress());
+		purchaseOrder.setUserID(user);
 		purchaseOrder.setOrderDate(Calendar.getInstance());
-		purchaseOrder.setPurchaseTotalAmount((float) purchaseOrder.getProducts().stream()
+		purchaseOrder.setPurchaseTotalAmount((float) purchaseOrder.getPurchaseProducts().stream()
 				.mapToDouble(product -> product.getTotalAmount()).reduce(0, Double::sum));
-
-		if (purchaseOrders.get(purchaseOrder.getUserID().getEmailAddress()) == null) {
-			List<PurchaseOrderDTO> orders = new ArrayList<PurchaseOrderDTO>();
-			orders.add(purchaseOrder);
-			purchaseOrders.put(purchaseOrder.getUserID().getEmailAddress(), orders);
-		} else {
-			purchaseOrders.get(purchaseOrder.getUserID().getEmailAddress()).add(purchaseOrder);
-		}
-
+		
+		
+		purchaseDao.addPurchaseOrder(purchaseOrder);
 		return true;
 	}
 
-	public List<ProductDTO> getAllProducts() {
-		return products;
+	public List<Product> getAllProducts() {
+		PurchaseDao purchaseDao = new PurchaseDaoImpl();
+		return purchaseDao.getAllproducts();
 	}
 
-	public List<PurchaseOrderDTO> getInvoiceDetails(int invoiceId) {
+	public List<PurchaseOrder> getInvoiceDetails(int invoiceId) {
 		System.out.println("Invoice Id : " + invoiceId);
-		InvoiceDTO invoice = invoices.get(invoiceId);
-		List<PurchaseOrderDTO> orders = new ArrayList<>();
-		purchaseOrders.values().stream().forEach(order -> orders.addAll(order));
-		System.out.println("Size : " + orders.size());
-		List<PurchaseOrderDTO> filteredOrders = orders.stream().filter(order -> {
-			if (order.getInvoice() != null)
-				return order.getInvoice().getInvoiceId() == invoiceId;
-			else
-				return false;
-		}).collect(Collectors.toList());
-		System.out.println(filteredOrders);
-		return filteredOrders;
+		PurchaseDao purchaseDao = new PurchaseDaoImpl();
+		return purchaseDao.getInvoiceDetails(invoiceId);
+		
 	}
+	
+	public void syncWithFerretDB() {
+		FerretApp ferretApp = new FerretApp();
+		ferretApp.sync();
+	}
+	
 }
