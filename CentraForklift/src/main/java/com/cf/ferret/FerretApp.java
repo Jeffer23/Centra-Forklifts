@@ -83,6 +83,7 @@ public class FerretApp {
 						else {
 							purProd.setProduct(prod);
 						}
+						purProd.setPurchaseProductId(0);
 					});
 					
 					purservice.addPurchaseOrder(order);

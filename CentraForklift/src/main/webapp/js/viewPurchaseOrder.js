@@ -15,6 +15,7 @@ $(document).ready(function() {
 	if(sessionStorage.getItem(userRoleKey) == 'dealer'){
 		$("#approve").hide();
 		$("#fullfillmentLink").hide();
+		$("#syncWithFerret").hide();
 	}
 	
     var t = $('#invoiceTB').DataTable({
@@ -118,6 +119,7 @@ $(document).ready(function() {
 			  url: "purchase/syncWithFerretApp",
 			  success: function(result){
 				  alert("Sync Successfull!!!");
+				  window.location.href = hostURL + "viewPurchaseOrder.html";
 				},
 				 error: function(result){
 					 alert("Error is Syncing with Ferret Application. Please try again after sometime or contact Admin.");
