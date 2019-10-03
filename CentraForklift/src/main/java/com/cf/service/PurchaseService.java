@@ -97,7 +97,9 @@ public class PurchaseService {
 		
 		User user = userDao.getUser(purchaseOrder.getUserID().getEmailAddress());
 		purchaseOrder.setUserID(user);
-		purchaseOrder.setOrderDate(Calendar.getInstance());
+		Calendar orderDate = Calendar.getInstance();
+		orderDate.add(Calendar.DAY_OF_MONTH, 1);
+		purchaseOrder.setOrderDate(orderDate);
 		purchaseOrder.setPurchaseTotalAmount((float) purchaseOrder.getPurchaseProducts().stream()
 				.mapToDouble(product -> product.getTotalAmount()).reduce(0, Double::sum));
 		

@@ -33,7 +33,15 @@ $(document).ready(function() {
             { "data": "purchaseOrderID" },
 			{ "data": "userID.companyName" },
 			{ "data": "userID.emailAddress" },
-            { "data": "orderDate" },
+			{ 
+				"data": "orderDate",
+				"render": function(data, type, row, meta){
+					if(type === 'display' && data !== null){
+						data = data.substring(0, 10);
+					}
+					return data;
+				 }
+			},
             { "data": "purchaseTotalAmount" },
             { "data": "orderStatus" }
         ],
